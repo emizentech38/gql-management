@@ -16,6 +16,7 @@ type Transaction  {
 type Query  {
     transactions:[Transaction!]
     transaction(transactionId:ID!): Transaction!
+    #TODO => ADD categoryStatistics query
 }
 
 #mutation = post/delete/patch function
