@@ -36,7 +36,7 @@ export const configurePassword = async () => {
           throw new Error("Invalid username and password");
         }
 
-        const isValidPassword = await bcrypt(passport, user.password);
+        const isValidPassword = await bcrypt(password, user.password);
 
         if (!isValidPassword) {
           throw new Error("Invalid username and password");

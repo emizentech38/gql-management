@@ -10,7 +10,7 @@ type User {
 
 #type query  waht are the queries that client need
 type Query  {
-    users:[User!]
+
     #auth user will if authenticated send user else null
     authUser:User
     user(userId:ID!): User!

@@ -34,19 +34,68 @@ const userResolver = {
         });
 
         await newUser.save();
+        await context.login(newUser);
+
+        return newUser;
       } catch (error) {
-        console.log(error);
+        console.log("Error in signUp: ", err);
+        throw new Error(err.message || "Internal server Error");
+      }
+    },
+    login: async (_, { input }, context) => {
+      try {
+        const { username, password } = input;
+
+        const user = context.authenticate("graphql-local", {
+          username,
+          password,
+        });
+
+        await context.login(user);
+        return user;
+      } catch (error) {
+        console.log("Error in login: ", err);
+        throw new Error(err.message || "Internal server Error");
+      }
+    },
+    logout: async (_, __, context) => {
+      try {
+        await context.logout();
+        req.session.destroy((err) => {
+          if (err) {
+            throw err;
+          }
+        });
+        res.clearCookie("connect.sid");
+        return { message: "Logout successfully" };
+      } catch (error) {
+        console.log("Error in logout: ", err);
+        throw new Error(err.message || "Internal server Error");
       }
     },
   },
   Query: {
-    users: () => {
-      return users;
+    // write the query for the auth user using passport getUser function
+    authUser: async (_, __, context) => {
+      try {
+        const user = await context.getUser();
+        return user;
+      } catch (error) {
+        console.error("Error in authUser: ", err);
+        throw new Error(err.message || "Internal server Error");
+      }
     },
-    user: (_, { userId }, { req, res }) => {
-      return users.find((user) => user._id === userId);
+    user: async (_, { userId }) => {
+      try {
+        const user = await User.findById(userId);
+        return user;
+      } catch (error) {
+        console.error("Error in user query: ", err);
+        throw new Error(err.message || "Error getting user");
+      }
     },
   },
+  // TODO => ADD USER / TRANSACTION RELATION
 };
 
 export default userResolver;
