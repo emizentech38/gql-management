@@ -6,6 +6,7 @@ const userResolver = {
     signUp: async (_, { input }, context) => {
       try {
         const { username, name, password, gender } = input;
+ 
 
         if (!username || !name || !password || !gender) {
           throw new Error("All fields are required");
@@ -31,12 +32,14 @@ const userResolver = {
           gender,
           profilePicture: gender === "male" ? boyProfilePic : girlProfilePic,
         });
+      
 
         await newUser.save();
+      
         await context.login(newUser);
 
         return newUser;
-      } catch (error) {
+      } catch (err) {
         console.log("Error in signUp: ", err);
         throw new Error(err.message || "Internal server Error");
       }
@@ -60,12 +63,12 @@ const userResolver = {
     logout: async (_, __, context) => {
       try {
         await context.logout();
-        req.session.destroy((err) => {
+        context.req.session.destroy((err) => {
           if (err) {
             throw err;
           }
         });
-        res.clearCookie("connect.sid");
+        context.res.clearCookie("connect.sid");
         return { message: "Logout successfully" };
       } catch (error) {
         console.log("Error in logout: ", err);
@@ -77,7 +80,9 @@ const userResolver = {
     // write the query for the auth user using passport getUser function
     authUser: async (_, __, context) => {
       try {
+        console.log(context.getUser())
         const user = await context.getUser();
+        console.log(user)
         return user;
       } catch (error) {
         console.error("Error in authUser: ", err);

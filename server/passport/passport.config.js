@@ -2,50 +2,41 @@ import passport from "passport";
 import bcrypt from "bcryptjs";
 
 import User from "../models/user.model.js";
-
 import { GraphQLLocalStrategy } from "graphql-passport";
 
-export const configurePassword = async () => {
-  // this is when the user enter in the session
-  passport.serializeUser((user, done) => {
-    console.log("serialize User");
-    done(null, user.Id);
-  });
+export const configurePassport = async () => {
+	passport.serializeUser((user, done) => {
+		console.log("Serializing user");
+		done(null, user.id);
+	});
 
-  // this is when the user goes out of the session
-  passport.deserializeUser(async (id, done) => {
-    console.log("deserialize User");
+	passport.deserializeUser(async (id, done) => {
+		console.log("Deserializing user");
+		try {
+			const user = await User.findById(id);
+			done(null, user);
+		} catch (err) {
+			done(err);
+		}
+	});
 
-    // here we add the try and catch for the user
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch (error) {
-      console.log(error);
-    }
-  });
+	passport.use(
+		new GraphQLLocalStrategy(async (username, password, done) => {
+			try {
+				const user = await User.findOne({ username });
+				if (!user) {
+					throw new Error("Invalid username or password");
+				}
+				const validPassword = await bcrypt.compare(password, user.password);
 
-  // here come the passport middleware
+				if (!validPassword) {
+					throw new Error("Invalid username or password");
+				}
 
-  passport.use(
-    new GraphQLLocalStrategy(async (username, password, done) => {
-      try {
-        const user = await User.findOne({ username });
-
-        if (!user) {
-          throw new Error("Invalid username and password");
-        }
-
-        const isValidPassword = await bcrypt(password, user.password);
-
-        if (!isValidPassword) {
-          throw new Error("Invalid username and password");
-        }
-
-        done(null, user);
-      } catch (error) {
-        return done(error);
-      }
-    })
-  );
+				return done(null, user);
+			} catch (err) {
+				return done(err);
+			}
+		})
+	);
 };

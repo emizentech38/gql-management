@@ -9,10 +9,10 @@ import dotenv from "dotenv";
 import session from "express-session";
 import connectMongo from "connect-mongodb-session";
 import { buildContext } from "graphql-passport";
-import { configurePassword } from "./passport/passport.config.js";
+import { configurePassport } from "./passport/passport.config.js";
 
 dotenv.config();
-configurePassword();
+configurePassport();
 
 // Required logic for integrating with Express
 const app = express();

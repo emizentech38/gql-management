@@ -20,7 +20,7 @@ type Query  {
 #fun(input):what it return
 type Mutation  {
     signUp(input:SignUpInput!):User
-    login(input:LoginInInput!):User
+    login(input:LoginInput!):User
     logout:LogoutResponse
 }
 
@@ -32,7 +32,7 @@ input SignUpInput  {
     gender:String!
 }
 
-input LoginInInput  {
+input LoginInput  {
     username:String!
     password:String!
 }

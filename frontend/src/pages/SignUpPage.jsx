@@ -2,15 +2,38 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import InputField from "../components/ui/InputField";
 import RadioButton from "../components/ui/RadioButton";
-
+import { useMutation } from "@apollo/client";
+import { SIGN_UP } from "../graphql/mutations/user.mutation";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
-	const [signUpData, setSignUpData] = useState({
-		name: "",
+    const [signUpData, setSignUpData] = useState({
+        name: "",
 		username: "",
 		password: "",
 		gender: "",
 	});
+    
+    const [signup , {loading , error}] = useMutation(SIGN_UP , {
+        refetchQueries: ["GetAuthenticatedUser"]
+    });
+
+    const handleSubmit = async (e) => {
+      
+		e.preventDefault();
+		try {
+            await signup({
+                variables:{
+                    input: signUpData
+                }
+            })
+        } catch (err) {
+            console.log("Error: " , err);
+            toast.error(err.message)
+        }
+	};
+
+
 
 	const handleChange = (e) => {
 		const { name, value, type } = e.target;
@@ -28,10 +51,6 @@ const SignUpPage = () => {
 		}
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		console.log(signUpData);
-	};
 
 	return (
 		<div className='h-screen flex justify-center items-center'>
@@ -89,9 +108,13 @@ const SignUpPage = () => {
 								<button
 									type='submit'
 									className='w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                                    disabled={loading}
 								>
-									Sign Up
+									{loading ? "Loading..." : "SignUp"}
 								</button>
+                                {error && (
+                                    <p className="text-red-500 text-sm mt-2">{error.message}</p>
+                                )}
 							</div>
 						</form>
 						<div className='mt-4 text-sm text-gray-600 text-center'>
