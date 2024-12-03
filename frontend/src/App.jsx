@@ -14,6 +14,8 @@ import { Toaster } from "react-hot-toast";
 function App() {
   const { data, loading, error } = useQuery(GET_AUTHENTICATED_USER);
 
+
+  console.log(data)
   // Derived state for user authentication
   const isAuthenticated = !!data?.authUser;
 

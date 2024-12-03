@@ -11,7 +11,7 @@ mutation SignUp($input:SignUpInput!){
 `
 
 export const LOGIN = gql`
-mutation login($input : LoginInput){
+mutation login($input : LoginInput!){
     login(input:$input){
         _id
         name

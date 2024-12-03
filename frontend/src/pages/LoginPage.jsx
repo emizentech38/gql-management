@@ -20,10 +20,13 @@ const LoginPage = () => {
 		}));
 	};
 
-   const [login , {loading}] =  useMutation(LOGIN)
+   const [login , {loading}] =  useMutation(LOGIN , {
+	refetchQueries: ["GetAuthenticatedUser"]
+   })
 
 	const handleSubmit = async(e) => {
 		e.preventDefault();
+		if(!loginData.username || !loginData.password) return toast.error("please fill all the fields")
 		try {
             await login({
                 variables:{
