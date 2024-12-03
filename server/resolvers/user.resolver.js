@@ -6,7 +6,6 @@ const userResolver = {
     signUp: async (_, { input }, context) => {
       try {
         const { username, name, password, gender } = input;
- 
 
         if (!username || !name || !password || !gender) {
           throw new Error("All fields are required");
@@ -32,10 +31,9 @@ const userResolver = {
           gender,
           profilePicture: gender === "male" ? boyProfilePic : girlProfilePic,
         });
-      
 
         await newUser.save();
-      
+
         await context.login(newUser);
 
         return newUser;
@@ -46,15 +44,14 @@ const userResolver = {
     },
     login: async (_, { input }, context) => {
       try {
-        
         const { username, password } = input;
 
         const user = await context.authenticate("graphql-local", {
           username,
           password,
         });
- 
-const actualUser = user.user
+
+        const actualUser = user.user;
         await context.login(actualUser);
         return actualUser;
       } catch (err) {
@@ -82,9 +79,9 @@ const actualUser = user.user
     // write the query for the auth user using passport getUser function
     authUser: async (_, __, context) => {
       try {
-        console.log(context.getUser())
+        console.log(context.getUser());
         const user = await context.getUser();
-        console.log(user)
+        console.log(user);
         return user;
       } catch (error) {
         console.error("Error in authUser: ", err);

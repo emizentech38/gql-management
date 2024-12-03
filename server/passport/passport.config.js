@@ -36,7 +36,7 @@ export const configurePassport = async () => {
 					throw new Error("Invalid username or password");
 				}
 
-console.log(user)
+
 				return done(null, user);
 			} catch (err) {
 				return done(err);
